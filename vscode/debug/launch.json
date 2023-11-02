@@ -1,0 +1,42 @@
+{
+    "configurations": [
+        /** Attach to the currently running debug instance _Assumes port 9229 
+            was used when running inspect on the [app]_
+
+            examples
+            - `node [app] --inspect `
+        */
+        {
+            "name": "Attach to Server:9229",
+            "port": 9229,
+            "request": "attach",
+            "skipFiles": ["<node_internals>/**"],
+            "type": "node",
+            // magic line to fix Unbound breakpoints:
+            "cwd": "${workspaceFolder}/[route to app]"
+        },
+
+
+        /** Serves nx app and launches vscode debug instance
+            
+            _Add additional runtime args or change serve to fit your project specifications_
+        */
+        {
+            "name": "Run [app] in Debug",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "nx",
+            "runtimeArgs": [
+                "serve",
+                "[app]"
+            ],
+            "console": "integratedTerminal",
+            "outFiles": [
+                "${workspaceFolder}/**/*.js",
+                "!**/node_modules/**"
+            ],
+            // magic line to fix Unbound breakpoints:
+            "cwd": "${workspaceFolder}/[route to app]"
+        }
+    ]
+}
