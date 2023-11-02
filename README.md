@@ -1,4 +1,6 @@
 # std-config
+![abstract neo-minimal stylistic shapes behind the text std-config](https://raw.githubusercontent.com/acgriswold/std-config/main/assets/std-config.png)
+
 Generic collection of config files, setup steps, and more.
 
 ## Collaborate
