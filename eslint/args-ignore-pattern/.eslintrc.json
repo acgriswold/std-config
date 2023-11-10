@@ -1,0 +1,30 @@
+{
+    "extends": ["./.eslintrc.base.json"],
+    "ignorePatterns": ["!**/*"],
+    "overrides": [{
+        "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+        "rules": {
+            // Setup ignore pattern to capture any argument that starts with "_" (e.g., _, __, _private)
+          "@typescript-eslint/no-unused-vars": ["error", {
+            "argsIgnorePattern": "^_"
+          }]
+        }
+      },
+      {
+        "files": ["*.ts", "*.tsx"],
+        "rules": {}
+      },
+      {
+        "files": ["*.js", "*.jsx"],
+        "rules": {}
+      },
+      {
+        "files": ["*.json"],
+        "parser": "jsonc-eslint-parser",
+        "rules": {
+          "@nx/dependency-checks": "error"
+        }
+      }
+    ]
+  }
+  
