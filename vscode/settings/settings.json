@@ -6,4 +6,13 @@
     "editor.tabSize": 4,
     "editor.insertSpaces": true,
     "editor.detectIndentation": false
+
+    /** 
+    Set language specific settings...
+
+    "[json]: {
+        "editor.detectIndentation": true
+    }
+    
+    */
 }
