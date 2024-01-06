@@ -1,0 +1,39 @@
+[user]
+    name = ???????
+    email = ???????
+
+[branch]
+    autosetuprebase = always
+
+[fetch]
+    prune = true
+
+[alias]
+    hi = !echo "hello"
+
+    main = !git checkout main && git pull origin
+    staging = !git checkout staging && git pull origin staging
+    
+    # Rebase current branch onto main (change to whatever your main branch of choice is)
+    update = pull --rebase origin main
+    amend = commit --amend --no-edit
+    undo = reset HEAD~1 --mixed
+    push-up = !git push origin `git branch --show-current`
+
+    # Delete all merged branches besides checkout/main (change to whatever your main branch of choice is)
+    prune-local-dry = !git branch --merged | awk '!/\\*|main/' | cut -c 2-
+    prune-local = !git prune-local-dry | xargs git branch -d
+    prune-local-force = !git prune-local-dry | xargs git branch -D
+    
+    # Create and checkout branch based on remote HEAD
+    create = "!f(){ git fetch && git checkout -b ${1} origin/HEAD && git branch --unset-upstream; };f"
+    
+    # Stop and remove all changes
+    nah = "!git reset --hard; git clean -df; if [ -d ".git/rebase-apply" ] || [ -d ".git/rebase-merge" ]; then git rebase --abort; fi;"
+    
+    # Single line logs
+    ll = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --numstat
+    ls = log --pretty=format:"%C(green)%h\\ %C(yellow)[%ad]%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --date=relative
+
+    # List all aliases
+    aliases = "!git config -l | grep alias | cut -c 7-"
