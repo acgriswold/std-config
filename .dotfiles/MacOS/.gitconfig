@@ -13,6 +13,7 @@
 
     main = !git checkout main && git pull origin
     staging = !git checkout staging && git pull origin staging
+    last = checkout @{-1}
     
     # Rebase current branch onto main (change to whatever your main branch of choice is)
     update = pull --rebase origin main
