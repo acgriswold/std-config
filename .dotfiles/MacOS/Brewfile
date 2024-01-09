@@ -1,8 +1,12 @@
 tap "homebrew/bundle"
+brew "httpie", link: false
 brew "parallel"
+brew "python@3.11"
 cask "arc"
-cask "docker"
 cask "figma"
+cask "httpie"
+cask "iterm2"
+cask "orbstack"
 cask "visual-studio-code"
 vscode "dooez.alt-catppuccin-vsc"
 vscode "ms-vscode-remote.remote-containers"
