@@ -26,7 +26,7 @@
 
 
 
-    // Prettier setup
+    // Formatter setup
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
 	"editor.formatOnSave": false,
 	"prettier.useTabs": true,
@@ -40,6 +40,11 @@
 	// "[typescript]": {
 	// 	"editor.defaultFormatter": "vscode.typescript-language-features"
 	// },
+	"[go]": {
+		"editor.insertSpaces": true,
+		"editor.formatOnSave": false,
+		"editor.defaultFormatter": "golang.go"
+	},
 
 
     // Catppuccine setup
