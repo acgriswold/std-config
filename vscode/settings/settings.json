@@ -1,13 +1,18 @@
 {
-    // terminal working directory
+    // IDE basic setup
     "terminal.integrated.cwd": "<path to working directory>",
+	"workbench.sideBar.location": "right",
+
+    "terminal.integrated.commandsToSkipShell": [
+		"workbench.action.toggleSidebarVisibility"
+	],
 
     // indentation settings
     "editor.tabSize": 4,
     "editor.insertSpaces": true,
     "editor.detectIndentation": false,
 
-    "editor.minimap.enabled": false
+    "editor.minimap.enabled": false,
 
     /** 
     Set language specific settings...
@@ -17,4 +22,33 @@
     }
     
     */
+
+
+
+    // Prettier setup
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"editor.formatOnSave": false,
+	"prettier.useTabs": true,
+	"prettier.tabWidth": 4,
+	"prettier.useEditorConfig": true,
+	"prettier.trailingComma": "all",
+	"prettier.singleQuote": true,
+	"prettier.jsxSingleQuote": true,
+	"prettier.singleAttributePerLine": true,
+	"prettier.htmlWhitespaceSensitivity": "strict",
+	// "[typescript]": {
+	// 	"editor.defaultFormatter": "vscode.typescript-language-features"
+	// },
+
+
+    // Catppuccine setup
+	"editor.semanticHighlighting.enabled": true,
+	"terminal.integrated.minimumContrastRatio": 2,
+	// applicable if you use Go, this is an opt-in flag!
+	"gopls": {
+		"ui.semanticTokens": true
+	},
+
+	"workbench.colorTheme": "Catppuccin Mocha",
+    "workbench.iconTheme": "catppuccin-macchiato",
 }

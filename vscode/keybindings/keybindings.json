@@ -1,0 +1,12 @@
+[
+	{
+		"key": "ctrl+s",
+		"command": "workbench.action.toggleSidebarVisibility",
+		"when": ""
+	},
+	{
+		"key": "cmd+k cmd+d",
+		"command": "editor.action.formatDocument",
+		"when": ""
+	}
+]
