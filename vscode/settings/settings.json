@@ -2,7 +2,8 @@
     // IDE basic setup
     "terminal.integrated.cwd": "<path to working directory>",
 	"workbench.sideBar.location": "right",
-
+	"vim.smartRelativeLine": true,
+	
     "terminal.integrated.commandsToSkipShell": [
 		"workbench.action.toggleSidebarVisibility"
 	],
