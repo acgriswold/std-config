@@ -21,6 +21,31 @@
     undo = reset HEAD~1 --mixed
     push-up = !git push origin `git branch --show-current`
 
+    # Formatted commit messages
+    # - git formatted-commit {type},{scope},{message}
+    #       "{type}({scope}): {message}"
+    # - git formatted-commit {type},{message}
+    #       "{type}: {message}"
+    formatted-commit = "!f(){ echo \"$(echo $@ | awk -F \",\" '{ gsub(/ /, \"\", $2);if($3==\"\"){print $1\": \"$2} else {print $1\"(\"$2\"): \"$3} }')\";};f"
+    init = formatted-commit 🎉,
+    feature = formatted-commit ✨,
+    fix = formatted-commit 	🐛,
+    chore = formatted-commit 🧹,
+    package = formatted-commit 📦,
+    style = formatted-commit 🎨,
+    wip = formatted-commit 🚧,
+    refactor = formatted-commit ♻️,
+    test = formatted-commit 🧪,
+    # init = formatted-commit init,
+    # feature = formatted-commit feat,
+    # fix = formatted-commit 	fix,
+    # chore = formatted-commit chore,
+    # package = formatted-commit package,
+    # style = formatted-commit style,
+    # wip = formatted-commit wip,
+    # refactor = formatted-commit refactor,
+    # test = formatted-commit test,
+
     # Delete all merged branches besides checkout/main (change to whatever your main branch of choice is)
     prune-local-dry = !git branch --merged | awk '!/\\*|main/' | cut -c 2-
     prune-local = !git prune-local-dry | xargs git branch -d
