@@ -26,7 +26,7 @@
     #       "{type}({scope}): {message}"
     # - git formatted-commit {type},{message}
     #       "{type}: {message}"
-    formatted-commit = "!f(){ echo \"$(echo $@ | awk -F \",\" '{ gsub(/ /, \"\", $2);if($3==\"\"){print $1\": \"$2} else {print $1\"(\"$2\"): \"$3} }')\";};f"
+    formatted-commit = "!f(){ git commit -m \"$(echo $@ | awk -F \",\" '{ gsub(/ /, \"\", $2);if($3==\"\"){print $1\": \"$2} else {print $1\"(\"$2\"): \"$3} }')\";};f"
     init = formatted-commit 🎉,
     feature = formatted-commit ✨,
     fix = formatted-commit 	🐛,
