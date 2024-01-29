@@ -19,3 +19,8 @@ It can be set for both...
 ### Behavioral
 
 - `"terminal.integrated.cwd": "<path to working directory>"`: Sets the default working directory for the integrated terminal.
+
+
+### Language Server
+
+- `"typescript.tsdk": "/usr/local/lib/node_modules/typescript/lib"`: Defines the default typescript sdk (since VsCode uses a specific language unless noted otherwise). The relative path can be found under the global node installs (`npm root -g`)
