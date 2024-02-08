@@ -1,8 +1,5 @@
 # ssh/bitbucket
 
-The Secure Shell protocol (ssh) allows developers to create secure connections between devices and Bitbucket Cloud (and other machines).
-Connections are authenticated using _public SSH keys,_ which derived from a _private SSH key_ (stored locally on the device).
-
 ## Prerequisites
 Having ssh cli commands downloaded on the machine helps ensure the proper creation and security of both public/private SSH key pairs. 
 
