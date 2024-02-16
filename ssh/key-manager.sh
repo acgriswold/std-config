@@ -17,7 +17,7 @@ handle_success() {
 }
 
 kill_agent() {
-  if [ $setupAgent ] && [ "$SSH_AGENT_PID" != "" ]; then
+  if [ $setupAgent = true ] && [ "$SSH_AGENT_PID" != "" ]; then
     eval `ssh-agent -k`
   fi
 }
