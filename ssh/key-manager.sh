@@ -1,24 +1,30 @@
 #!/bin/bash
 # PREREQ: echo $SSH_AGENT_PID   or   ps -auxc | grep ssh-agent   then   eval $(ssh-agent)
-# RUN WITH bash ~/.ssh/keys/key-manager.sh -k {key name} -u {user name} -s
+#   or use -s flag 
+# RUN WITH . ~/.ssh/keys/key-manager.sh -k {key name} -u {user name} -s
+# ALWAYS KEEP -s AT THE END OF THE SCRIPT UNTIL I FIGURE OUT A BETTER SOLUTION FOR FLAGS
+
+shouldReturn=false
+returnStatus=0
 
 setupAgent=false
-user="agriswold@hntb.com"
+user=""
 key=""
 
 handle_error() {
   usage
   kill_agent
-  exit 1
+  shouldReturn=true
+  returnStatus=1
 }
 
 handle_success() {
-  exit 1
+  shouldReturn=true
 }
 
 kill_agent() {
   if [ $setupAgent = true ] && [ "$SSH_AGENT_PID" != "" ]; then
-    eval `ssh-agent -k`
+    eval "$(ssh-agent -k)"
   fi
 }
 
@@ -47,8 +53,8 @@ usage() {
   echo " -u, --user            User to assign key to"
   echo " -k, --key             REQUIRED: Name of the generated key (illegal characters will be removed)"
   echo " -l, --list            List currently registered keys"
-  echo " -s, --setup           EXPERIMENTAL: Setup and configure ssh-agent for current shell session"
-  echo "                                     Future expansions will try and pass in command to run after key is setup"
+  echo " -s, --setup           Setup and configure ssh-agent for current shell session (be sure to source script to current shell to set all environment variables)"
+  
 
   if [ "$SSH_AGENT_PID" != "" ]; then
     echo ""
@@ -70,7 +76,7 @@ handle_high_priority_options() {
     case $1 in
     -s | --setup*)
       if [ "$SSH_AGENT_PID" = "" ]; then
-        eval `ssh-agent -s`
+        eval "$(ssh-agent -s)"
         setupAgent=true
       else
         echo "ssh-agent already set up with id $SSH_AGENT_PID"
@@ -89,7 +95,7 @@ handle_options() {
     case $1 in
     -h | --help)
       usage
-      exit 0
+      return "$returnStatus"
       ;;
     -v | --verbose)
       verbose_mode=true
@@ -98,6 +104,7 @@ handle_options() {
       if ! has_argument $@; then
         echo "-n must be set to a valid key name" >&2
         handle_error
+        return "$returnStatus"
       fi
 
       key="$HOME/.ssh/$(extract_argument $@ | sed -e 's/[^A-Za-z0-9._-]/_/g')"
@@ -108,6 +115,7 @@ handle_options() {
       if ! has_argument $@; then
         echo "-u must be set to a valid user" >&2
         handle_error
+        return "$returnStatus"
       fi
 
       user=$(extract_argument $@)
@@ -117,6 +125,7 @@ handle_options() {
     -l | --list*)
       ssh-add -l
       handle_success
+      return "$returnStatus"
 
       ;;
     -s | --setup*)
@@ -125,6 +134,7 @@ handle_options() {
     *)
       echo "Invalid option: $1" >&2
       handle_error
+      return "$returnStatus"
       ;;
     esac
     shift
@@ -134,11 +144,24 @@ handle_options() {
 # Run code
 print_branding
 handle_high_priority_options "$@"
+
+if [ $shouldReturn = true ]; then
+  return "$returnStatus"
+fi
+
 handle_options "$@"
+
+if [ $shouldReturn = true ]; then
+  return "$returnStatus"
+fi
 
 if [ -z "$key" ]; then
   echo "key must be set to a valid "
   handle_error
+fi
+
+if [ $shouldReturn = true ]; then
+  return "$returnStatus"
 fi
 
 if [ "$SSH_AGENT_PID" = "" ]; then
@@ -146,10 +169,18 @@ if [ "$SSH_AGENT_PID" = "" ]; then
   handle_error
 fi
 
+if [ $shouldReturn = true ]; then
+  return "$returnStatus"
+fi
+
 if ! [ -f "$key" ]; then
   ssh-keygen -t ed25519 -b 4096 -C "$user" -f "$key"
 else
   echo "Skipping generation since $key already exists"
+fi
+
+if [ $shouldReturn = true ]; then
+  return "$returnStatus"
 fi
 
 # setup ssh key for 1 hour
@@ -161,5 +192,5 @@ else
   echo "Could not add key"
 fi
 
-# kill created ssh-agent to not leak processes
-kill_agent
+handle_success
+return "$returnStatus"
