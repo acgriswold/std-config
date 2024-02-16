@@ -5,9 +5,7 @@
 # ALWAYS KEEP -s AT THE END OF THE SCRIPT UNTIL I FIGURE OUT A BETTER SOLUTION FOR FLAGS
 
 shouldReturn=false
-returnStatus=0
 
-setupAgent=false
 user=""
 key=""
 
@@ -15,15 +13,20 @@ handle_error() {
   usage
   kill_agent
   shouldReturn=true
-  returnStatus=1
 }
 
 handle_success() {
   shouldReturn=true
 }
 
+unset_values() {
+  unset "user"
+  unset "key"
+  unset "shouldReturn"
+}
+
 kill_agent() {
-  if [ $setupAgent = true ] && [ "$SSH_AGENT_PID" != "" ]; then
+  if [ "$SSH_AGENT_PID" != "" ]; then
     eval "$(ssh-agent -k)"
   fi
 }
@@ -54,7 +57,7 @@ usage() {
   echo " -k, --key             REQUIRED: Name of the generated key (illegal characters will be removed)"
   echo " -l, --list            List currently registered keys"
   echo " -s, --setup           Setup and configure ssh-agent for current shell session (be sure to source script to current shell to set all environment variables)"
-  
+  echo " --kill                Kills the currently running ssh-agent"
 
   if [ "$SSH_AGENT_PID" != "" ]; then
     echo ""
@@ -77,11 +80,14 @@ handle_high_priority_options() {
     -s | --setup*)
       if [ "$SSH_AGENT_PID" = "" ]; then
         eval "$(ssh-agent -s)"
-        setupAgent=true
       else
         echo "ssh-agent already set up with id $SSH_AGENT_PID"
-        setupAgent=false
       fi
+
+      ;;
+    --kill*)
+      kill_agent
+      handle_success
 
       ;;
     esac
@@ -95,7 +101,7 @@ handle_options() {
     case $1 in
     -h | --help)
       usage
-      return "$returnStatus"
+      return
       ;;
     -v | --verbose)
       verbose_mode=true
@@ -104,7 +110,7 @@ handle_options() {
       if ! has_argument $@; then
         echo "-n must be set to a valid key name" >&2
         handle_error
-        return "$returnStatus"
+        return
       fi
 
       key="$HOME/.ssh/$(extract_argument $@ | sed -e 's/[^A-Za-z0-9._-]/_/g')"
@@ -115,7 +121,7 @@ handle_options() {
       if ! has_argument $@; then
         echo "-u must be set to a valid user" >&2
         handle_error
-        return "$returnStatus"
+        return
       fi
 
       user=$(extract_argument $@)
@@ -125,7 +131,7 @@ handle_options() {
     -l | --list*)
       ssh-add -l
       handle_success
-      return "$returnStatus"
+      return
 
       ;;
     -s | --setup*)
@@ -134,7 +140,7 @@ handle_options() {
     *)
       echo "Invalid option: $1" >&2
       handle_error
-      return "$returnStatus"
+      return
       ;;
     esac
     shift
@@ -146,41 +152,34 @@ print_branding
 handle_high_priority_options "$@"
 
 if [ $shouldReturn = true ]; then
-  return "$returnStatus"
+  unset_values
+  return 1
 fi
 
 handle_options "$@"
-
 if [ $shouldReturn = true ]; then
-  return "$returnStatus"
+  unset_values
+  return 0
 fi
 
 if [ -z "$key" ]; then
   echo "key must be set to a valid "
   handle_error
-fi
-
-if [ $shouldReturn = true ]; then
-  return "$returnStatus"
+  unset_values
+  return 1
 fi
 
 if [ "$SSH_AGENT_PID" = "" ]; then
   echo "\$SSH_AGENT_PID is not set up correctly."
   handle_error
-fi
-
-if [ $shouldReturn = true ]; then
-  return "$returnStatus"
+  unset_values
+  return 1
 fi
 
 if ! [ -f "$key" ]; then
   ssh-keygen -t ed25519 -b 4096 -C "$user" -f "$key"
 else
   echo "Skipping generation since $key already exists"
-fi
-
-if [ $shouldReturn = true ]; then
-  return "$returnStatus"
 fi
 
 # setup ssh key for 1 hour
@@ -193,4 +192,4 @@ else
 fi
 
 handle_success
-return "$returnStatus"
+return 0
