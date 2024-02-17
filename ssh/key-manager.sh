@@ -114,7 +114,7 @@ handle_options() {
       fi
 
       key="$HOME/.ssh/$(extract_argument $@ | sed -e 's/[^A-Za-z0-9._-]/_/g')"
-
+      
       shift
       ;;
     -u | --user*)
@@ -135,7 +135,6 @@ handle_options() {
 
       ;;
     -s | --setup*)
-      shift
       ;;
     *)
       echo "Invalid option: $1" >&2
