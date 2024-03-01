@@ -195,9 +195,6 @@ if [ "$user" = "" ]; then
   return 0
 fi
 
-unset_values
-return 
-
 # run code
 if ! [ -f "$key" ]; then
   ssh-keygen -t ed25519 -b 4096 -C "$user" -f "$key"
