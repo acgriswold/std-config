@@ -180,7 +180,6 @@ if [ $shouldReturn = true ]; then
   return 0
 fi
 
-echo "key $keyname"
 # guard clauses ssh keys
 if [ -z "$keyname" ]; then
   echo 'Key name must be provided'
