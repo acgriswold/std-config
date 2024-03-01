@@ -3,6 +3,13 @@
     "terminal.integrated.cwd": "<path to working directory>",
 	"workbench.sideBar.location": "right",
 	"vim.smartRelativeLine": true,
+	"vim.handleKeys": {
+		"<C-d>": true,
+		"<C-s>": false,
+		"<C-z>": false,
+		// Allow vs code file search
+		"<C-p>": false
+	},
 	
     "terminal.integrated.commandsToSkipShell": [
 		"workbench.action.toggleSidebarVisibility"
