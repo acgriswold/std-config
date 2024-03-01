@@ -12,7 +12,6 @@ key=""
 
 handle_error() {
   usage
-  kill_agent
   shouldReturn=true
 }
 
