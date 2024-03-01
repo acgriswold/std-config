@@ -161,6 +161,7 @@ if [ $shouldReturn = true ]; then
   return 0
 fi
 
+# guard clauses
 if [ -z "$key" ]; then
   echo "key must be set to a valid "
   handle_error
@@ -175,6 +176,29 @@ if [ "$SSH_AGENT_PID" = "" ]; then
   return 1
 fi
 
+# default user to git config if non provided
+if [ "$user" = "" ]; then
+  user="$(git config --get user.email)"
+fi
+
+if [ "$user" = "" ]; then
+  echo 'We use your git config as the default for our author identity'
+  echo``
+  echo '*** Plase tell me who you are.'
+  echo
+  echo 'Run:'
+  echo '    git config --global user.email "you@example.com"'    
+  echo
+  echo 'Or provide the user flag:'
+  echo '    . key-manager.sh -k "myKey" -u "you@example.com"'
+  unset_values
+  return 0
+fi
+
+unset_values
+return 
+
+# run code
 if ! [ -f "$key" ]; then
   ssh-keygen -t ed25519 -b 4096 -C "$user" -f "$key"
 else
