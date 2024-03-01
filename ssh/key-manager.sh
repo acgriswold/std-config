@@ -57,6 +57,7 @@ usage() {
   echo " -k, --key             REQUIRED: Name of the generated key (illegal characters will be removed)"
   echo " -l, --list            List currently registered keys"
   echo " -s, --setup           Setup and configure ssh-agent for current shell session (be sure to source script to current shell to set all environment variables)"
+  echo " -d, --drop-keys       Removes all keys from the current ssh-agent"
   echo " --kill                Kills the currently running ssh-agent"
 
   if [ "$SSH_AGENT_PID" != "" ]; then
@@ -130,6 +131,12 @@ handle_options() {
       ;;
     -l | --list*)
       ssh-add -l
+      handle_success
+      return
+
+      ;;
+    -d | --drop-keys*)
+      ssh-add -D
       handle_success
       return
 
