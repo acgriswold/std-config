@@ -1,12 +1,13 @@
 #!/bin/bash
 # PREREQ: echo $SSH_AGENT_PID   or   ps -auxc | grep ssh-agent   then   eval $(ssh-agent)
-#   or use -s flag 
+#   or use -s flag
 # RUN WITH . ~/.ssh/keys/key-manager.sh -k {key name} -u {user name} -s
 # ALWAYS KEEP -s AT THE END OF THE SCRIPT UNTIL I FIGURE OUT A BETTER SOLUTION FOR FLAGS
 
 shouldReturn=false
 
 user=""
+keyname=""
 key=""
 
 handle_error() {
@@ -22,12 +23,21 @@ handle_success() {
 unset_values() {
   unset "user"
   unset "key"
+  unset "keyname"
   unset "shouldReturn"
 }
 
 kill_agent() {
   if [ "$SSH_AGENT_PID" != "" ]; then
     eval "$(ssh-agent -k)"
+  fi
+}
+
+setup_agent() {
+  if [ "$SSH_AGENT_PID" = "" ]; then
+    eval "$(ssh-agent -s)"
+  else
+    echo "ssh-agent already set up with id $SSH_AGENT_PID"
   fi
 }
 
@@ -38,7 +48,6 @@ print_branding() {
   echo "|_____||_____||__|__|  |_|_|_||__,||_|_||__,||_  ||___||_|  "
   echo "                                             |___|          "
   echo "                                                            "
-
 
   # echo ' ______   ______   __  __       __    __   ______   __   __   ______   ______   ______   ______    '
   # echo '/\  ___\ /\  ___\ /\ \_\ \     /\ "-./  \ /\  __ \ /\ "-.\ \ /\  __ \ /\  ___\ /\  ___\ /\  == \   '
@@ -60,6 +69,10 @@ usage() {
   echo " -d, --drop-keys       Removes all keys from the current ssh-agent"
   echo " --kill                Kills the currently running ssh-agent"
 
+  echo
+  echo "Quick Actions:"
+  echo " -bb, --bitbucket      Setup Bitbucket ssh keys"
+
   if [ "$SSH_AGENT_PID" != "" ]; then
     echo ""
     echo "ssh-agent current setup up on process id $SSH_AGENT_PID"
@@ -79,11 +92,7 @@ handle_high_priority_options() {
   while [ $# -gt 0 ]; do
     case $1 in
     -s | --setup*)
-      if [ "$SSH_AGENT_PID" = "" ]; then
-        eval "$(ssh-agent -s)"
-      else
-        echo "ssh-agent already set up with id $SSH_AGENT_PID"
-      fi
+      setup_agent
 
       ;;
     --kill*)
@@ -102,6 +111,7 @@ handle_options() {
     case $1 in
     -h | --help)
       usage
+      handle_success
       return
       ;;
     -v | --verbose)
@@ -109,13 +119,13 @@ handle_options() {
       ;;
     -k | --key*)
       if ! has_argument $@; then
-        echo "-n must be set to a valid key name" >&2
+        echo "-k must be set to a valid key name" >&2
         handle_error
         return
       fi
 
-      key="$HOME/.ssh/$(extract_argument $@ | sed -e 's/[^A-Za-z0-9._-]/_/g')"
-      
+      keyname=$(extract_argument $@)
+
       shift
       ;;
     -u | --user*)
@@ -141,8 +151,11 @@ handle_options() {
       return
 
       ;;
-    -s | --setup*)
+    -bb | --bitbucket*)
+      setup_agent
+      keyname="bitbucket"
       ;;
+    -s | --setup*) ;;
     *)
       echo "Invalid option: $1" >&2
       handle_error
@@ -168,12 +181,19 @@ if [ $shouldReturn = true ]; then
   return 0
 fi
 
-# guard clauses
-if [ -z "$key" ]; then
-  echo "key must be set to a valid "
+echo "key $keyname"
+# guard clauses ssh keys
+if [ -z "$keyname" ]; then
+  echo 'Key name must be provided'
+  echo
+  echo 'Run:'
+  echo '    . key-manager.sh -k "myKey"'
+  echo
   handle_error
   unset_values
   return 1
+else
+  key="$HOME/.ssh/$(echo "$keyname" | sed -e 's/[^A-Za-z0-9._-]/_/g')"
 fi
 
 if [ "$SSH_AGENT_PID" = "" ]; then
@@ -190,11 +210,11 @@ fi
 
 if [ "$user" = "" ]; then
   echo 'We use your git config as the default for our author identity'
-  echo``
+  echo
   echo '*** Plase tell me who you are.'
   echo
   echo 'Run:'
-  echo '    git config --global user.email "you@example.com"'    
+  echo '    git config --global user.email "you@example.com"'
   echo
   echo 'Or provide the user flag:'
   echo '    . key-manager.sh -k "myKey" -u "you@example.com"'
@@ -211,7 +231,7 @@ fi
 
 # setup ssh key for 1 hour
 ssh-add -t 1h "$key"
- 
+
 if [ $? -eq 0 ]; then
   echo "SSH public/private key pairs successfully added"
 else
