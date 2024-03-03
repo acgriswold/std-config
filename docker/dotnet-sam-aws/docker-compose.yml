@@ -1,0 +1,12 @@
+services:
+  dev:
+    image: aws_sam_image
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - code:/root/workspaces
+      - vs-server:/root/.vscode-server
+volumes:
+  vs-server: {}
+  code: {}
