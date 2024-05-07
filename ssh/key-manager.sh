@@ -150,7 +150,7 @@ handle_options() {
       return
 
       ;;
-    -bb | --bitbucket*)
+    bb | bitbucket*)
       setup_agent
       keyname="bitbucket"
       ;;
