@@ -227,8 +227,8 @@ else
   echo "Skipping generation since $key already exists"
 fi
 
-# setup ssh key for 1 hour
-ssh-add -t 1h "$key"
+# setup ssh key for 3 hour
+ssh-add -t 3h "$key"
 
 if [ $? -eq 0 ]; then
   echo "SSH public/private key pairs successfully added"
