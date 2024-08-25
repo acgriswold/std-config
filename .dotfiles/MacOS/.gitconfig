@@ -65,5 +65,5 @@
     aliases = "!git config -l | grep alias | cut -c 7-"
 
     # Force set ssh
-    show-ssh-url = remote show origin | grep "Fetch URL" | sed 's/ *Fetch URL: //' | sed 's/https:\/\/github.com\//git@github.com:/'
+    show-ssh-url = !git remote show origin | grep 'Fetch URL' | sed 's/ *Fetch URL: //' | sed 's/https:\\/\\/github.com\\//git@github.com:/'
     set-ssh-url = !git remote set-url origin $(git show-ssh-url)
